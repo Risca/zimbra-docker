@@ -1,12 +1,20 @@
 #!/bin/sh
 ## Preparing all the variables like IP, Hostname, etc, all of them from the container
 sleep 5
-HOSTNAME=$(hostname -a)
+HOSTNAME=$(hostname -s)
 DOMAIN=$(hostname -d)
 CONTAINERIP=$(ip addr | grep 'state UP' -A2 | tail -n1 | awk '{print $2}' | cut -f1  -d'/')
 RANDOMHAM=$(date +%s|sha256sum|base64|head -c 10)
 RANDOMSPAM=$(date +%s|sha256sum|base64|head -c 10)
 RANDOMVIRUS=$(date +%s|sha256sum|base64|head -c 10)
+INSTALLED=/opt/zimbra/.INSTALLED
+
+## Locales
+locale-gen en_US en_US.UTF-8 en_GB en_GB.UTF-8
+dpkg-reconfigure locales
+
+## SSH
+sudo service ssh restart
 
 ## Installing the DNS Server ##
 echo "Configuring DNS Server"
@@ -20,6 +28,22 @@ address=/$HOSTNAME.$DOMAIN/$CONTAINERIP
 user=root
 EOF
 sudo service dnsmasq restart
+
+## Already installed?
+if [ -f $INSTALLED ]; then
+	su - zimbra -c 'zmcontrol restart'
+	echo "You can now access your Zimbra Collaboration Server"
+
+	if [[ $1 == "-d" ]]; then
+		while true; do sleep 1000; done
+	fi
+
+	if [[ $1 == "-bash" ]]; then
+		/bin/bash
+	fi
+
+  exit
+fi
 
 ##Creating the Zimbra Collaboration Config File ##
 touch /opt/zimbra-install/installZimbraScript
@@ -126,6 +150,7 @@ zimbra_require_interprocess_security="1"
 zimbra_server_hostname="$HOSTNAME.$DOMAIN"
 INSTALL_PACKAGES="zimbra-core zimbra-ldap zimbra-logger zimbra-mta zimbra-snmp zimbra-store zimbra-apache zimbra-spell zimbra-memcached zimbra-proxy"
 EOF
+
 ##Install the Zimbra Collaboration ##
 echo "Downloading Zimbra Collaboration 8.8.15"
 wget -O /opt/zimbra-install/zimbra-zcs-8.8.15.tar.gz https://files.zimbra.com/downloads/8.8.15_GA/zcs-8.8.15_GA_3869.UBUNTU18_64.20190918004220.tgz
@@ -144,6 +169,9 @@ echo "Installing Zimbra Collaboration injecting the configuration"
 
 su - zimbra -c 'zmcontrol restart'
 echo "You can access now to your Zimbra Collaboration Server"
+
+##Mark installed ##
+touch $INSTALLED
 
 if [[ $1 == "-d" ]]; then
   while true; do sleep 1000; done
