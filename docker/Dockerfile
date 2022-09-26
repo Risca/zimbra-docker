@@ -17,6 +17,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
   dnsmasq \
   dnsutils \
   locales \
+  iproute2 \
   net-tools \
   sudo \
   rsyslog \
