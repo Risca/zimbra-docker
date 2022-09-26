@@ -14,7 +14,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
   openssh-client \
   openssh-server \
   software-properties-common \
-  dnsmasq \
   dnsutils \
   locales \
   iproute2 \

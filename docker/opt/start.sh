@@ -12,19 +12,6 @@ INSTALLED=/opt/zimbra/.INSTALLED
 ## SSH
 sudo service ssh restart
 
-## Installing the DNS Server ##
-echo "Configuring DNS Server"
-mv /etc/dnsmasq.conf /etc/dnsmasq.conf.old
-cat <<EOF >>/etc/dnsmasq.conf
-server=8.8.8.8
-listen-address=127.0.0.1
-domain=$DOMAIN
-mx-host=$DOMAIN,$HOSTNAME.$DOMAIN,0
-address=/$HOSTNAME.$DOMAIN/$CONTAINERIP
-user=root
-EOF
-sudo service dnsmasq restart
-
 ## Already installed?
 if [ -f $INSTALLED ]; then
 	su - zimbra -c 'zmcontrol restart'
