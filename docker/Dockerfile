@@ -18,6 +18,9 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
   locales \
   iproute2 \
   net-tools \
+  python3 \
+  python3-venv \
+  libaugeas0 \
   sudo \
   rsyslog \
   unzip \
@@ -25,6 +28,11 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
   && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
   && update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 
+RUN python3 -m venv /opt/certbot/ \
+  && /opt/certbot/bin/pip install --upgrade pip \
+  && /opt/certbot/bin/pip install certbot \
+  && ln -s /opt/certbot/bin/certbot /usr/bin/certbot
+RUN echo "0 0,12 * * * root /opt/certbot/bin/python -c 'import random; import time; time.sleep(random.random() * 3600)' && /usr/bin/certbot renew -q" | tee -a /etc/crontab
 
 EXPOSE 22 25 465 587 110 143 993 995 80 443 8080 8443 7071
 
