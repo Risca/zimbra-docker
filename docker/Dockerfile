@@ -25,7 +25,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
   && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
   && update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 
-VOLUME ["/opt/zimbra"]
 
 EXPOSE 22 25 465 587 110 143 993 995 80 443 8080 8443 7071
 
