@@ -9,10 +9,6 @@ RANDOMSPAM=$(date +%s|sha256sum|base64|head -c 10)
 RANDOMVIRUS=$(date +%s|sha256sum|base64|head -c 10)
 INSTALLED=/opt/zimbra/.INSTALLED
 
-## Locales
-locale-gen en_US en_US.UTF-8 en_GB en_GB.UTF-8
-dpkg-reconfigure locales
-
 ## SSH
 sudo service ssh restart
 

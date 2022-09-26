@@ -16,10 +16,14 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
   software-properties-common \
   dnsmasq \
   dnsutils \
+  locales \
   net-tools \
   sudo \
   rsyslog \
-  unzip
+  unzip \
+  && locale-gen en_US en_US.UTF-8 en_GB en_GB.UTF-8 \
+  && localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8 \
+  && update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 
 VOLUME ["/opt/zimbra"]
 
